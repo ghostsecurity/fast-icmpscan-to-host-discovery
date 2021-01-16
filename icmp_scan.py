@@ -22,7 +22,6 @@ parser.add_argument('host', type=str, help='Enter the ip address you want to per
 
 try:
     args = parser.parse_args()
-    
 except IOError, msg:
     parser.error(str(msg))
 
