@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import socket
-import sys
 from argparse import ArgumentParser
 import random
 import ipaddress
@@ -13,8 +12,7 @@ from threading import Thread
 
 parser = ArgumentParser(prog='icmp_scan',
                         usage='icmp_scan [options] [host], [-h] to help',
-                        description='icmp scan for host discovery',
-                        epilog='Developed by: Nicholas Guirro | ghostsecurity'
+                        description='icmp scan for host discovery'
                         )
 
 parser.add_argument('-t', '--time',metavar='', type=float, dest='time_ar', default=0.002, help='Use a float number to define the waiting time for sending each package (by default the number is 0.002)')
@@ -29,8 +27,6 @@ except IOError, msg:
     parser.error(str(msg))
 
 SIGNAL = True
-
-
 
 def checksum(source_string):
     sum = 0
@@ -69,8 +65,7 @@ def ping(addr, timeout=1):
     ping_socket.connect((addr, 80))
     ping_socket.sendall((packet))
     ping_socket.close()
- 
-
+    
 def listen(responses):
     global SIGNAL
     s = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
@@ -104,7 +99,6 @@ def rotate(addr, file_name, wait, responses):
     file.write(str(hosts))
     print "Done", time.strftime("%X %x %Z")
    
-
 def main():
     responses =  []
     ips = (u'{}/{}'.format(args.host, args.submask))
@@ -118,8 +112,6 @@ def main():
 
     t_ping = Thread(target=rotate,args=[ip_network, file_name, wait, responses])
     t_ping.start()
-
-    
 
 main()
 
