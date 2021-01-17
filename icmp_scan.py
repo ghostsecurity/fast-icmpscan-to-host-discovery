@@ -87,6 +87,7 @@ def rotate(addr, file_name, wait, responses):
     global SIGNAL
     SIGNAL = False
     ping('127.0.0.1')
+    time.sleep(0.9)
     print len(responses), 'hosts found!'
     print "Writing File"
     hosts = []
