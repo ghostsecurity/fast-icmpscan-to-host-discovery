@@ -11,7 +11,7 @@ import time
 from threading import Thread
 
 parser = ArgumentParser(prog='icmp_scan',
-                        usage='icmp_scan [options] [host], [-h] to help',
+                        usage='icmp_scan.py [options] [host], [-h] to help',
                         description='icmp scan for host discovery'
                         )
 
