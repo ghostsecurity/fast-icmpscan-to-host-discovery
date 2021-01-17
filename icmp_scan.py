@@ -83,7 +83,7 @@ def rotate(addr, file_name, wait, responses):
         time.sleep(wait)
     print 'All packets send', time.strftime("%X %x %Z")
     print 'Waiting for all responses'
-    time.sleep(2)
+    time.sleep(4)
     global SIGNAL
     SIGNAL = False
     ping('127.0.0.1')
