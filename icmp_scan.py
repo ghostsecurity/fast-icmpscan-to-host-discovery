@@ -108,7 +108,7 @@ def listen(responses):
 
 # ping, unpack funcion - save list, disable listen
 def rotate(addr, file_name, wait, responses):
-    print 'Sending Packets\n', time.strftime("%X %x %Z")
+    print 'Sending Packets', time.strftime("%X %x %Z")
     for ip in addr:
         ping(str(ip))
         time.sleep(wait)
