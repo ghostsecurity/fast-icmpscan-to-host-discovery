@@ -27,8 +27,9 @@ parser.add_argument('-t', '--time',metavar='', type=float, dest='time_ar', defau
                     '''
                    )
 
-parser.add_argument('-s', '--sm',metavar='' ,type=str,dest='submask',default='24', help=
-                    '''Put a network mask here to "randomize" the elements of the ip 
+parser.add_argument('-s', '--sm',metavar='' ,type=str,dest='submask',default='24', 
+                    help='''
+                    Put a network mask here to "randomize" the elements of the ip 
                     (mask set as standard, 24).
                     '''
                    )
