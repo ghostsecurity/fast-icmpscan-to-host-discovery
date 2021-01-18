@@ -1,24 +1,49 @@
+################################################
+# Developed by ghostsecurity | Nicholas Guirro #
+# https://www.youtube.com/ghostsecurity        #
+################################################
+
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 import socket
-from argparse import ArgumentParser
 import random
 import ipaddress
 import struct
 import time
-
 from threading import Thread
+from argparse import ArgumentParser
 
+# Argument parser 
 parser = ArgumentParser(prog='icmp_scan',
                         usage='icmp_scan.py [options] [host], [-h] to help',
-                        description='icmp scan for host discovery'
+                        description='icmp scan for host discovery, privileges super user required!'
                         )
 
-parser.add_argument('-t', '--time',metavar='', type=float, dest='time_ar', default=0.002, help='Use a float number to define the waiting time for sending each package (by default the number is 0.002)')
-parser.add_argument('-s', '--sm',metavar='' ,type=str,dest='submask',default='24', help='Put a network mask here to "randomize" the elements of the ip (mask set as standard, 24)')
-parser.add_argument('-n','-namelist',metavar='', dest='namelist', type=str, default='log.txt', help='the name of the file to be saved with the hosts')
-parser.add_argument('host', type=str, help='Enter the ip address you want to perform the host discovery(this argument is required)')
+parser.add_argument('-t', '--time',metavar='', type=float, dest='time_ar', default=0.002, 
+                    help='''
+                    Use a float number to define the waiting time for sending each package 
+                    (by default the number is 0.002) adjustment according to available band.
+                    '''
+                   )
+
+parser.add_argument('-s', '--sm',metavar='' ,type=str,dest='submask',default='24', help=
+                    '''Put a network mask here to "randomize" the elements of the ip 
+                    (mask set as standard, 24).
+                    '''
+                   )
+parser.add_argument('-n','--namelist',metavar='', dest='namelist', type=str, default='log.txt', 
+                    help='''
+                    the name of the file to be saved with the hosts.
+                    '''
+                   )
+
+parser.add_argument('host', type=str, 
+                    help='''
+                    Enter the ip address you want to perform the host discovery
+                    (this argument is required).
+                    '''
+                   )
 
 try:
     args = parser.parse_args()
@@ -27,6 +52,7 @@ except IOError, msg:
 
 SIGNAL = True
 
+# Check Packet integrity
 def checksum(source_string):
     sum = 0
     count_to = (len(source_string) / 2) * 2
@@ -46,6 +72,7 @@ def checksum(source_string):
     answer = answer >> 8 | (answer << 8 & 0xff00)
     return answer
 
+# Create Packet 
 def create_packet(id):
     header = struct.pack('bbHHh', 8, 0, 0, id, 1)
     data = 192 * 'Q'
@@ -53,18 +80,20 @@ def create_packet(id):
     header = struct.pack('bbHHh', 8, 0, socket.htons(my_checksum), id, 1)
     return header + data
 
+# Send all packets 
 def ping(addr, timeout=1):
     try:
         ping_socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
     except Exception as error:
         print error
 
-    packet_id = int((id(timeout) * random.random()) % 65535)
-    packet = create_packet(packet_id)
+    my_packet_id = int((id(timeout) * random.random()) % 65535)
+    my_packet = create_packet(my_packet_id)
     ping_socket.connect((addr, 80))
-    ping_socket.sendall((packet))
+    ping_socket.sendall((my_packet))
     ping_socket.close()
-    
+
+# Receive all packets 
 def listen(responses):
     global SIGNAL
     s = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
@@ -76,6 +105,7 @@ def listen(responses):
     print 'Stop listening ...'
     s.close()
 
+# ping, unpack funcion - save list, disable listen
 def rotate(addr, file_name, wait, responses):
     print 'Sending Packets\n', time.strftime("%X %x %Z")
     for ip in addr:
@@ -86,7 +116,7 @@ def rotate(addr, file_name, wait, responses):
     time.sleep(4)
     global SIGNAL
     SIGNAL = False
-    ping('127.0.0.1')
+    ping('127.0.0.1') #final ping to pass the signal = False and stop the listen function
     time.sleep(0.9)
     print len(responses), 'hosts found!'
     print "Writing File"
@@ -98,11 +128,12 @@ def rotate(addr, file_name, wait, responses):
     file = open(file_name, 'w')
     file.write(str(hosts))
     print "Done", time.strftime("%X %x %Z")
-   
+
+# main function
 def main():
     responses =  []
     ips = (u'{}/{}'.format(args.host, args.submask))
-    wait = args.time_ar
+    wait = args.time_ar # adjustment according to available band
     file_name = args.namelist
     ip_network = ipaddress.ip_network(ips, strict=False)
 
