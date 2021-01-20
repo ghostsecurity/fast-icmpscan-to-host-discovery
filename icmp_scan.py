@@ -117,7 +117,7 @@ def rotate(addr, file_name, wait, responses):
     time.sleep(4)
     global SIGNAL
     SIGNAL = False
-    ping('127.0.0.1') #final ping to pass the signal = False and stop the listen function
+    ping('127.0.0.1') # Final ping to pass the signal = False and stop the listen function
     time.sleep(0.9)
     print len(responses), 'hosts found!'
     print "Writing File"
@@ -134,7 +134,7 @@ def rotate(addr, file_name, wait, responses):
 def main():
     responses =  []
     ips = (u'{}/{}'.format(args.host, args.submask))
-    wait = args.time_ar # adjustment according to available band
+    wait = args.time_ar # Adjustment according to available band
     file_name = args.namelist
     ip_network = ipaddress.ip_network(ips, strict=False)
 
